@@ -41,6 +41,11 @@ def addWafDetails(container_id,project_name):
     print("\n\n")
     print(cobjs,"\n\n")
 
+def getPort():
+    f=open("portmapping.txt","r+")
+    port =  int(f.read())
+    f.write(port+1)
+    return port
 
 def dockerRun(request):
     request.session['msg']=""
@@ -57,7 +62,7 @@ def dockerRun(request):
             print("\n\n\n\nsgn\n\n")
             sgncontainer = client.containers.run(request.POST["image"], 
                     detach=True,
-                    ports={request.POST["Cport"]+'/tcp':request.POST["Hport"]},
+                    ports={getPort()+'/tcp':request.POST["Hport"]},
                     tty = True,
                     cap_add = ['NET_ADMIN'],
                     volumes=['/home/anilprajapati/sem8/:/sgn-waf'],

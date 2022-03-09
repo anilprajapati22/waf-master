@@ -2,9 +2,9 @@ import docker
 client = docker.from_env() #start connection with docker
 
 try:
-    sgncontainer = client.containers.run("sgn-waf", detach=True,
+    sgncontainer = client.containers.run("alpine", detach=True,
             ports={'9080/tcp':8080},
-            volumes=['/home/anil/sem8:/sgn-waf'],
+            volumes=['/home/anilprajapati/sem8:/sgn-waf'],
             name="sgn-python")
 
     print(sgncontainer.name) #name of the container
