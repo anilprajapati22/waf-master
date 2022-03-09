@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+
+{% block content %}
+
+
+<!-- here link of the newly created containers link will come -->
+        <div>
+            {% if container_id %}
+            
+                <p> Container Details :  
+                <a href="{{ container_id }}/"> <b>{{ container_id }}</b> </a>
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+<form method="POST">
+    {% csrf_token %}
+    <div class="loginfrm">
+        <div class="logname">
+            <h1>Deploy Your Container</h1>
+        </div>
+
+        <div class="row">
+            <input type="text" name="name" placeholder="Project Name">
+        </div>
+   
+        <div class="row">
+            <input type="hidden" name="image" value="anilprajapati18/sgn-docker-gui" >
+        </div>
+                
+        <div class="row">
+            <!-- here add host port and container port mapping -->
+<!-- also add here user can add multiple port mapping -->
+            <p>Port Mapping : </p>
+            <input type="text" name="Hport" placeholder="Host">
+            <input type="text" name="Cport" placeholder="Container">
+
+        </div>
+    </br>
+    </br>
+    </br></br>
+
+
+
+        <div class="row">
+            <input type="number" name="replica" placeholder="Replicas"> 
+        </div>
+
+        
+    </br>
+        <div class="row">
+            <input type="submit" name="login" value="Request">
+        </div>
+    </div>
+</form>
+
+
+{% endblock %}

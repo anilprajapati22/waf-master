@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+
+{% block content %}
+<style>
+.table{
+margin-top:5%;
+}
+</style>
+    <div>
+        {% if msg %}
+        
+            <p>   
+            {{ msg }}
+            </p>
+
+        {% endif %}
+
+    </div>
+
+<!-- {% for service in services %}
+    {%  for key,value in service.items %}
+       <p> {{key}} : {{value}} </p>
+    {% endfor %}    
+{% endfor %} -->
+
+
+
+
+    {% if cobjs %}
+        <div class="container">
+        <table border="2" class=" table"> 
+            <thead class="table-dark text-center">
+            <tr>
+                <td scope="col">ID</td>
+                <td scope="col">Name</td>
+                <td scope="col">Port Mapping </td>
+                <td scope="col">IPAddress</td>
+                <td scope="col">Link</td>
+                <td scope="col">Remove</td>
+                {% if services %}
+                    <td> Replicas </td>
+                    <td> Scale </td>
+                {% endif %}
+                
+            </tr>
+            </thead>
+            {% for c in cobjs %}
+                <tr class="text-center">
+                    <td>{{c.0}}</td>
+                    <td>{{c.1}}</td>
+                    <td> {{c.3}}  : {{ c.6 }}</td>
+                    <td>{{c.4}}</td>    
+                    <td> <a href="http://localhost:{{ c.3 }}"  target="_blank"> Link </a> </td>
+                    {% if services %}
+                        <td> <a href="/{{ c.2 }}/serviceRemove"> <b>  Remove  </b> </a> </td>
+                    {%else%}
+                        <td> <a href="/{{ c.2 }}/containerRemove"> <b>  Remove  </b> </a> </td>
+                    {%endif%}
+                    {% if services %}
+                        <td>
+                            <form method="POST" action="serviceScale">
+                                {% csrf_token %}
+                            <input type="hidden" value="{{c.0}}"  name="service_id">        
+                            <input type="text" value={{c.7}} name="scale"> 
+                        </td>
+                        <td>
+                            <input type="submit" name="login" value="Scale">
+                        </form>
+                        </td>
+                    {% endif %}
+                    
+                   
+                    
+                </tr>
+            {% endfor %}    
+        </table>
+        </div>
+    {% endif %}
+
+
+    </br>
+</br>
+
+
+
+{% endblock %}
