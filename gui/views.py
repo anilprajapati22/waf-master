@@ -65,9 +65,9 @@ def dockerRun(request):
         # try:
         print("\n\n\n\nsgn\n\n")
         port_c = getPort()
-        sgncontainer = client.containers.run("anilprajapati18/sgn-docker-gui", 
+        sgncontainer = client.containers.run("anilprajapati18/sgn-waf-saas", 
                 detach=True,
-                ports={str(80)+'/tcp':port_c},
+                ports={str(8080)+'/tcp':port_c},
                 tty = True,
                 cap_add = ['NET_ADMIN'],
                 volumes=['/home/anilprajapati/sem8/:/sgn-waf'],
