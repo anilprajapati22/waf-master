@@ -24,6 +24,15 @@ def getPublicIP():
     public_ip = "sgnons"
     return public_ip
 
+def getPort():
+    f = open("portmapping.txt","r")
+    port = f.read()
+    f.close()
+    f = open("portmapping.txt","w")
+    f.write(str(int(port)+1))
+    f.close()
+    return str(port)
+
 def addWafDetails(container_id,project_name):
     cobjs =  [ container.attrs for container in [client.containers.get(container_id)] ]
     cobjs = [ [ d['Config']['Hostname'], d['Name'][1:], d['Id'], d['NetworkSettings']['Ports'][list(d['NetworkSettings']['Ports'].keys())[0]][0]['HostPort'], d['NetworkSettings']['IPAddress'] , "localhost"+":"+ d['NetworkSettings']['Ports'][list(d['NetworkSettings']['Ports'].keys())[0]][0]['HostPort'] , list(d['NetworkSettings']['Ports'].keys())[0] ] for d in cobjs if "container" in d['Name']] 
@@ -41,11 +50,6 @@ def addWafDetails(container_id,project_name):
     print("\n\n")
     print(cobjs,"\n\n")
 
-def getPort():
-    f=open("portmapping.txt","r+")
-    port =  int(f.read())
-    f.write(port+1)
-    return port
 
 def dockerRun(request):
     request.session['msg']=""
@@ -58,32 +62,33 @@ def dockerRun(request):
         print(request.POST)
 
         is_detach=False
-        try:
-            print("\n\n\n\nsgn\n\n")
-            sgncontainer = client.containers.run(request.POST["image"], 
-                    detach=True,
-                    ports={getPort()+'/tcp':request.POST["Hport"]},
-                    tty = True,
-                    cap_add = ['NET_ADMIN'],
-                    volumes=['/home/anilprajapati/sem8/:/sgn-waf'],
-                    name=request.POST["name"]+"container")
-            print(sgncontainer.name) #name of the container
-            print(sgncontainer.attrs)
-            container_id = sgncontainer.id        
-            context = { 'container_id' : container_id }
+        # try:
+        print("\n\n\n\nsgn\n\n")
+        port_c = getPort()
+        sgncontainer = client.containers.run("anilprajapati18/sgn-docker-gui", 
+                detach=True,
+                ports={str(80)+'/tcp':port_c},
+                tty = True,
+                cap_add = ['NET_ADMIN'],
+                volumes=['/home/anilprajapati/sem8/:/sgn-waf'],
+                name=request.POST["name"]+"container")
+        print(sgncontainer.name) #name of the container
+        print(sgncontainer.attrs)
+        container_id = sgncontainer.id        
+        context = { 'container_id' : container_id }
 
-            addWafDetails(sgncontainer.attrs)
+        addWafDetails(container_id,request.POST["name"])
 
-            return redirect(containerList,request.POST["name"])
+        return redirect(containerList)
             #return render(request=request, template_name="dockerRun.html",context=context)	            
 
-        except:
-            print("sgnons error")
+        # except:
+        #     print("sgnons error")
 
-            #if same name container was there
-            if "sgn-python" in [container.name for container in client.containers.list()]:
-                print("container name is already there ! please change the name")
-            return render(request=request, template_name="dockerRun.html",context={})	
+        #     #if same name container was there
+        #     if "sgn-python" in [container.name for container in client.containers.list()]:
+        #         print("container name is already there ! please change the name")
+        #     return render(request=request, template_name="dockerRun.html",context={})	
 	
 
 
