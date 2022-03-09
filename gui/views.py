@@ -29,7 +29,7 @@ def getPort():
     port = f.read()
     f.close()
     f = open("portmapping.txt","w")
-    f.write(str(int(port)+1))
+    f.write(str(int(port)+2))
     f.close()
     return str(port)
 
@@ -67,7 +67,7 @@ def dockerRun(request):
         port_c = getPort()
         sgncontainer = client.containers.run("anilprajapati18/sgn-waf-saas", 
                 detach=True,
-                ports={str(8080)+'/tcp':port_c},
+                ports={str(8080)+'/tcp':port_c,str(80)+'/tcp':str(int(port_c)+1)},
                 tty = True,
                 cap_add = ['NET_ADMIN'],
                 volumes=['/home/anilprajapati/sem8/:/sgn-waf'],
