@@ -53,7 +53,15 @@ margin-top:5%;
                     <td>{{c.1}}</td>
                     <td> {{c.3}}  : {{ c.6 }}</td>
                     <td>{{c.4}}</td>    
-                    <td> <a href="http://localhost:{{ c.3 }}"  target="_blank"> Link </a> </td>
+                    <td> 
+                        {% for j in cDetails %}
+                            {% if j.container_id == c.2 %}    
+                                <a href="http://localhost:{{ c.3 }}"  target="_blank"> ssh </a>
+                                <a href="http://localhost:{{ port1 }}"  target="_blank"> Client </a>
+                                <a href="http://localhost:{{ port2 }}"  target="_blank"> WAF </a>
+                            {% endif %}
+                        {% endfor %} 
+                    </td>
                     {% if services %}
                         <td> <a href="/{{ c.2 }}/serviceRemove"> <b>  Remove  </b> </a> </td>
                     {%else%}

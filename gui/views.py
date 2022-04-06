@@ -129,7 +129,10 @@ def containerRemove(request, container_id):
 def containerList(request):
     cobjs =  [ container.attrs for container in client.containers.list() ]
     cobjs = [ [ d['Config']['Hostname'], d['Name'][1:], d['Id'], d['NetworkSettings']['Ports'][list(d['NetworkSettings']['Ports'].keys())[0]][0]['HostPort'], d['NetworkSettings']['IPAddress'] , "localhost"+":"+ d['NetworkSettings']['Ports'][list(d['NetworkSettings']['Ports'].keys())[0]][0]['HostPort'] , list(d['NetworkSettings']['Ports'].keys())[0] ] for d in cobjs if "container" in d['Name']] 
-    context= {  "cobjs" : cobjs }
+    context= {  "cobjs" : cobjs , 
+    "cDetails" : wafdetails.objects.all() , 
+    "port1" : int(cobjs[0][3])-1,
+    "port2" : int(cobjs[0][3])-2 }
     print("\n\n")
     print(cobjs,"\n\n")
     
