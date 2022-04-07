@@ -7,6 +7,10 @@ from .models import iptableRules,wafdetails
 from .forms import UserRegistrationForm
 from django.contrib.auth import login
 
+import os
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+base_port_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 client = docker.from_env() #start connection with docker
 
@@ -29,10 +33,10 @@ def getPublicIP():
     return public_ip
 
 def getPort():
-    f = open("waf-master/portmapping.txt","r")
+    f = open(os.path.join(base_port_url, 'portmapping.txt'),"r")
     port = f.read()
     f.close()
-    f = open("waf-master/portmapping.txt","w")
+    f = open(os.path.join(base_port_url, 'portmapping.txt'),"w")
     f.write(str(int(port)+3))
     f.close()
     return str(port)
