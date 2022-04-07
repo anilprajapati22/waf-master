@@ -25,10 +25,10 @@ def getPublicIP():
     return public_ip
 
 def getPort():
-    f = open("portmapping.txt","r")
+    f = open("waf-master/portmapping.txt","r")
     port = f.read()
     f.close()
-    f = open("portmapping.txt","w")
+    f = open("waf-master/portmapping.txt","w")
     f.write(str(int(port)+3))
     f.close()
     return str(port)
