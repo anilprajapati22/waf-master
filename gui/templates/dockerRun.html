@@ -5,41 +5,46 @@
 
 {% block content %}
 
+{% if user.is_authenticated %}
+    <!-- here link of the newly created containers link will come -->
+            <div>
+                {% if container_id %}
+                
+                    <p> Container Details :  
+                    <a href="{{ container_id }}/"> <b>{{ container_id }}</b> </a>
+                    </p>
 
-<!-- here link of the newly created containers link will come -->
-        <div>
-            {% if container_id %}
+                {% endif %}
+
+            </div>
+
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="loginfrm">
+            <div class="logname">
+                <h1>Create WAF</h1>
+            </div>
+
+            <div class="row">
+                <input type="text" name="name" placeholder="Project Name">
+            </div>
+
+
+
+
             
-                <p> Container Details :  
-                <a href="{{ container_id }}/"> <b>{{ container_id }}</b> </a>
-                </p>
-
-            {% endif %}
-
+        </br>
+            <div class="row">
+                <input type="submit" name="login" value="Request">
+            </div>
         </div>
+    </form>
+{% else %}
+    <h1> please login </h1>
 
 
-<form method="POST">
-    {% csrf_token %}
-    <div class="loginfrm">
-        <div class="logname">
-            <h1>Create WAF</h1>
-        </div>
-
-        <div class="row">
-            <input type="text" name="name" placeholder="Project Name">
-        </div>
-
-
-
-
-        
-    </br>
-        <div class="row">
-            <input type="submit" name="login" value="Request">
-        </div>
-    </div>
-</form>
+{% endif %}
 
 
 {% endblock %}

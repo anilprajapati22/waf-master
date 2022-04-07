@@ -4,6 +4,8 @@ from django.http import HttpResponse
 import docker
 import time
 from .models import iptableRules,wafdetails
+from .forms import UserRegistrationForm
+from django.contrib.auth import login
 
 
 client = docker.from_env() #start connection with docker
@@ -18,6 +20,8 @@ def sgn(request):
 def index(request):
     context={}
     return render(request, 'index.html', context)    
+
+
 
 def getPublicIP():
     # write here code for getting public ip

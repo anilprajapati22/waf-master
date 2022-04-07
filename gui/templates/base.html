@@ -100,18 +100,27 @@
 <div>
     <nav class="navbar navbar-expand-md navbar-light bg-dark sticky-top">
       <div class="container">
-        <h1><a href="{% url 'dockerRun' %}" class="navbar-brand text-light">
-        <b>&nbsp;&nbsp;Home</b></a></h1>
-
-        <h1><a href="{% url 'containerList' %}" class="navbar-brand text-light">
-			<b>&nbsp;&nbsp;Containers</b></a></h1>
-			
-		<h1><a href="{% url 'serviceList' %}" class="navbar-brand text-light">
-			<b>&nbsp;&nbsp;Services</b></a></h1>
-	
-		<h1><a href="{% url 'pullimages' %}" class="navbar-brand text-light">
-			<b>&nbsp;&nbsp;Images</b></a></h1>
 		
+			{% if user.is_authenticated %}
+			<h1 class="navbar-brand text-light">  <b>Hiii {{ user.username }}!</b> </h1>
+			<h1><a href="{% url 'dockerRun' %}" class="navbar-brand text-light">
+				<b>&nbsp;&nbsp;Home</b></a></h1>
+		
+				<h1><a href="{% url 'containerList' %}" class="navbar-brand text-light">
+					<b>&nbsp;&nbsp;Containers</b></a></h1>
+					
+				<h1><a href="{% url 'serviceList' %}" class="navbar-brand text-light">
+					<b>&nbsp;&nbsp;Services</b></a></h1>
+			
+				<h1><a href="{% url 'pullimages' %}" class="navbar-brand text-light">
+					<b>&nbsp;&nbsp;Images</b></a></h1>
+					 
+	 
+			 <h1><a href="{% url 'logout' %}" class="navbar-brand text-light"> <b>&nbsp;&nbsp;Log Out </b></a></h1>   
+			 {% else%}
+			 <h1><a href="{% url 'login' %}" class="navbar-brand text-light"> <b>&nbsp;&nbsp;Log In </b></a></h1>
+			 {% endif %}
+	 
 
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>

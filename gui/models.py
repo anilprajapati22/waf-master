@@ -16,6 +16,11 @@ class iptableRules(models.Model):
     rule = models.CharField(max_length=200)
     ipaddr = models.CharField(max_length=200)
 
+class SQlFileterRules(models.Model):
+    project_name = models.CharField(max_length=200)
+    SQLFilterStr = models.CharField(max_length=200)
+
+
 class wafdetails(models.Model):
     container_id =  models.CharField(max_length=200)
     container_name = models.CharField(max_length=200)
