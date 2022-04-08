@@ -117,13 +117,14 @@ def containerDetails(request, container_id ):
     context= {  "cobjs" : cobjs, "cid" : cobj.attrs['Id'][:10] , "container_id"  :  container_id }
     return render(request=request, template_name="containerDetails.html",context=context)
 
-def containerRemove(request, container_id):
-    # remove container
-    cobj=client.containers.get(container_id)
-    cobj.kill()
-    cobj.remove()
-    context = { "msg" : "Your Container Is Removed !!" }
-    return render(request=request, template_name="containerDetails.html",context=context)
+# def containerRemove(request, container_id):
+#     # remove container
+#     cobj=client.containers.get(container_id)
+#     cobj.kill()
+#     cobj.remove()
+#     wafdetails.objects.all().delete()
+#     context = { "msg" : "Your Container Is Removed !!" }
+#     return render(request=request, template_name="containerDetails.html",context=context)
             
 def getImages():
     images=[image.tags[0] for image in  client.images.list() if image.tags]
@@ -135,6 +136,8 @@ def containerRemove(request, container_id):
     cobj=client.containers.get(container_id)
     cobj.kill()
     cobj.remove()
+    print("\n\n deleting all containers \n\n")
+    wafdetails.objects.all().delete()
     context = { "msg" : "Your Container Is Removed !!" }
     return redirect(containerList)
 
