@@ -6,7 +6,7 @@ import time
 from .models import iptableRules,wafdetails
 from .forms import UserRegistrationForm
 from django.contrib.auth import login
-
+import requests
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 base_port_url = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,8 +29,12 @@ def index(request):
 
 def getPublicIP():
     # write here code for getting public ip
-    public_ip = "sgnons"
-    return public_ip
+    public_ip = requests.get("http://169.254.169.254/latest/meta-data/public-ipv4")
+    if public_ip:
+        return public_ip.content.decode('UTF-8')
+    else:    
+        public_ip = "sgnons"
+        return public_ip
 
 def getPort():
     f = open(os.path.join(base_port_url, 'portmapping.txt'),"r")
