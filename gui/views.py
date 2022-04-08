@@ -144,7 +144,10 @@ def containerList(request):
         "port2" : int(cobjs[0][3])-2 }
         print("\n\n")
         print(cobjs,"\n\n")
-            
+    else:
+        context= {  "cobjs" : cobjs 
+         }
+
     return render(request=request, template_name="containerDetails.html",context=context)
  
 def serviceList(request,msg=None):
