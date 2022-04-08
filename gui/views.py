@@ -29,12 +29,15 @@ def index(request):
 
 def getPublicIP():
     # write here code for getting public ip
-    public_ip = requests.get("http://169.254.169.254/latest/meta-data/public-ipv4")
-    if public_ip:
-        return public_ip.content.decode('UTF-8')
-    else:    
-        public_ip = "sgnons"
-        return public_ip
+    try:
+        public_ip = requests.get("http://169.254.169.254/latest/meta-data/public-ipv4")
+        if public_ip:
+            return public_ip.content.decode('UTF-8')
+        else:    
+            public_ip = "sgnons"
+            return public_ip
+    except:
+        return "localhost"
 
 def getPort():
     f = open(os.path.join(base_port_url, 'portmapping.txt'),"r")
@@ -147,9 +150,10 @@ def containerList(request):
     context = None
     if len(cobjs) >= 1:
         context= {  "cobjs" : cobjs , 
-        "cDetails" : wafdetails.objects.all() , 
+        "cDetails" : wafdetails.objects.all()[0] , 
         "port1" : int(cobjs[0][3])-1,
-        "port2" : int(cobjs[0][3])-2 }
+        "port2" : int(cobjs[0][3])-2,
+        "public_ip" : getPublicIP() }
         print("\n\n")
         print(cobjs,"\n\n")
     else:
