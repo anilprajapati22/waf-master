@@ -272,7 +272,7 @@ def register(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            #getAuthenticateEmail(request.POST['email'])            
+            getAuthenticateEmail(request.POST['email'])            
             user = form.save()
             login(request, user)
             return redirect("dockerRun")
@@ -292,13 +292,45 @@ def is_bill_payed(last_date_to_pay):
 
 
 def payBill(request):
-    bill_pay = Bills.objects.get(Uid = request.user.id)
+    bill_pay = Bills.objects.filter(Uid = request.user.id)
+    if len(bill_pay) >0:
+        if request.method == "POST":
+            bill_pay[0].last_date_to_pay = bill_pay[0].last_date_to_pay +  relativedelta(months=1)
+            bill_pay[0].save()
+            callSQS(request.user.email,bill_pay[0].last_date_to_pay)
+        context = {
+            "last_date_to_pay" : bill_pay[0].last_date_to_pay
+        }    
+        return render (request=request, template_name="payBill.html",context=context)    
+    else:
+        return render (request=request, template_name="payBill.html",context={"msg":"request for service"})
 
-    if request.method == "POST":
-        bill_pay.last_date_to_pay = bill_pay.last_date_to_pay +  relativedelta(months=1)
-        bill_pay.save()
-    context = {
-        "last_date_to_pay" : bill_pay.last_date_to_pay
-    }    
-    return render (request=request, template_name="payBill.html",context=context)    
-	
+def callSQS(email,Ddate):
+	sqs = boto3.client('sqs',region_name='us-east-1')
+
+	#queue_url = 'https://sqs.ap-south-1.amazonaws.com/675270067251/SgnCovidPlazmaSQS'
+
+	# Send message to SQS queue
+	response = sqs.send_message(
+		QueueUrl=queue_url,
+		DelaySeconds=10,
+		MessageAttributes={
+			'email': {
+				'DataType': 'String',
+				'StringValue': email
+			},
+			'Ddate': {
+				'DataType': 'String',
+				'StringValue': str(Ddate)
+			},
+			'is_secret': {
+				'DataType': 'String',
+				'StringValue': "yes"
+			}
+		},
+		MessageBody=(
+			'sgnons'
+		)
+	)
+
+	print(response['MessageId'])

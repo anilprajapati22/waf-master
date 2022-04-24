@@ -155,17 +155,18 @@
                 <div class="mx-auto">
                     {% if msg %}
     
-                    <p>   
-                    {{ msg }}
-                    </p>
-            
-                {% endif %}
+                        <p>   
+                        {{ msg }}
+                        </p>
+                
+                    {% endif %}
             
 
                 </div>
                 <li class="rules signin-active"><a class="btn">Pay Bill</a></li>
             </ul>
         </div>
+        {% if last_date_to_pay %}
         <div ng-app ng-init="checked = false">
             <form class="form-signin" action="" method="post" class="mx-auto" name="form"> 
                     {% csrf_token %}
@@ -180,8 +181,9 @@
          
           
             </div></div></div>
-
-
+        {% else %}
+            <p> {{msg}} </p>    
+        {% endif %}    
   <script>
     $(function() {
         $(".btn").click(function() {
