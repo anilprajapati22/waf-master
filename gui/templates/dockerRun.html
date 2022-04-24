@@ -5,46 +5,232 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
-    <!-- here link of the newly created containers link will come -->
-            <div>
-                {% if container_id %}
-                
-                    <p> Container Details :  
-                    <a href="{{ container_id }}/"> <b>{{ container_id }}</b> </a>
+<!-- CSS only -->
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<style>
+
+    .frame {
+        height: 420px;
+        width: 420px;
+      background-color: #08164d;
+        background-size: cover;
+        margin-left: auto;
+        margin-right: auto;
+        border-top: solid 1px rgba(255, 255, 255, .5);
+        border-radius: 5px;
+        box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        transition: all .5s ease
+    }
+    
+    
+    li.rules {
+        padding-left: 10px;
+        font-size: 18px;
+        display: inline;
+        text-align: left;
+        text-transform: uppercase;
+        padding-right: 10px;
+        color: #ffffff
+    }
+    
+    .signin-active a {
+        padding-bottom: 10px;
+        color: #ffffff;
+        text-decoration: none;
+        border-bottom: solid 2px #1059FF;
+        transition: all .25s ease;
+        cursor: pointer
+    }
+    
+    .signin-inactive a {
+        padding-bottom: 0;
+        color: rgba(255, 255, 255, .3);
+        text-decoration: none;
+        border-bottom: none;
+        cursor: pointer
+    }
+    
+    .signup-active a {
+        cursor: pointer;
+        color: #ffffff;
+        text-decoration: none;
+        border-bottom: solid 1px #1059FF;
+        padding-bottom: 10px
+    }
+    
+    .signup-inactive a {
+        cursor: pointer;
+        color: rgba(255, 255, 255, .3);
+        text-decoration: none;
+        transition: all .25s ease
+    }
+    
+    .form-signin {
+        width: 430px;
+        height: 375px;
+        font-size: 16px;
+        font-weight: 300;
+        padding-left: 37px;
+        padding-right: 37px;
+        padding-top: 55px;
+        transition: opacity .5s ease, transform .5s ease
+    }
+    
+    .form-signin-left {
+        transform: translateX(-400px);
+        opacity: .0
+    }
+    
+    .form-signup {
+        width: 430px;
+        height: 375px;
+        font-size: 12px;
+        font-weight: 300;
+        padding-left: 37px;
+        padding-right: 37px;
+        padding-top: 55px;
+        position: relative;
+        top: -375px;
+        left: 400px;
+        opacity: 0;
+        transition: all .5s ease
+    }
+    
+    .form-signup-left {
+        transform: translateX(-399px);
+        opacity: 1
+    }
+    
+    .form-signup-down {
+        top: 0px;
+        opacity: 0
+    }
+    
+    
+    .form-styling {
+        width: 100%;
+        height: 35px;
+        padding-left: 15px;
+        border: none;
+        border-radius: 20px;
+        margin-bottom: 20px;
+        background: rgba(255, 255, 255, .2)
+    }
+    
+    label {
+        font-weight: 400;
+        text-transform: uppercase;
+        font-size: 13px;
+        padding-left: 15px;
+        padding-bottom: 10px;
+        color: rgba(255, 255, 255, .7);
+        display: block
+    }
+    
+    :focus {
+        outline: none
+    }
+    
+    .form-signin input:focus,
+    textarea:focus,
+    textarea:focus {
+        background: rgba(255, 255, 255, .3);
+        border: none;
+        padding-right: 40px;
+        transition: background .5s ease
+    }
+    
+    
+    </style>
+        {% if not is_bill_pending %}
+        <h1> Please Pay Bill First </h1>
+        {% endif %}
+        {% if user.is_authenticated %}
+
+<div class="container">
+    <div class="frame mb-5">
+        <div class="nav_1">
+            <ul class="links">
+                <div class="mx-auto">
+                    {% if msg %}
+    
+                    <p>   
+                    {{ msg }}
                     </p>
-
-                {% endif %}
-
-            </div>
-
-
-    <form method="POST">
-        {% csrf_token %}
-        <div class="loginfrm">
-            <div class="logname">
-                <h1>Create WAF</h1>
-            </div>
-
-            <div class="row">
-                <input type="text" name="name" placeholder="Project Name">
-            </div>
-
-
-
-
             
-        </br>
-            <div class="row">
-                <input type="submit" name="login" value="Request">
-            </div>
+                {% endif %}
+            
+
+                </div>
+                <li class="rules signin-active"><a class="btn">Pull Images</a></li>
+            </ul>
         </div>
-    </form>
-{% else %}
-    <h1> please login </h1>
+
+    
+       
+    
+
+        <div ng-app ng-init="checked = false">
+            <form class="form-signin" action="" method="post" class="mx-auto" name="form"> 
+                    {% csrf_token %}
+                
+
+                <input type="text" class="form-styling form-control" name="name" placeholder="Project Name">
+                
+                
+                <button type="submit" class="btn btn-primary col-12 add-btn" name="login" value="login">Request</button>
+
+            </form>
+         
+          
+            </div></div></div>
+            {% else %}
+            <h1> please login </h1>
+        
+        
+            {% endif %}
+        
+
+  <script>
+    $(function() {
+        $(".btn").click(function() {
+        $(".form-signin").toggleClass("form-signin-left");
+        $(".form-signup").toggleClass("form-signup-left");
+        $(".frame").toggleClass("frame-long");
+        $(".signup-inactive").toggleClass("signup-active");
+        $(".signin-active").toggleClass("signin-inactive");
+        $(".forgot").toggleClass("forgot-left");
+        $(this).removeClass("idle").addClass("active");
+        });
+        });
+        
+        $(function() {
+        $(".btn-signup").click(function() {
+        $(".nav_1").toggleClass("nav-up");
+        $(".form-signup-left").toggleClass("form-signup-down");
+        $(".success").toggleClass("success-left");
+        $(".frame").toggleClass("frame-short");
+        });
+        });
+        
+        $(function() {
+        $(".btn-signin").click(function() {
+        $(".btn-animate").toggleClass("btn-animate-grow");
+        $(".welcome").toggleClass("welcome-left");
+        $(".cover-photo").toggleClass("cover-photo-down");
+        $(".frame").toggleClass("frame-short");
+        $(".profile-photo").toggleClass("profile-photo-down");
+        $(".btn-goback").toggleClass("btn-goback-up");
+        $(".forgot").toggleClass("forgot-fade");
+        });
+        });
+  </script>
 
 
-{% endif %}
 
 
 {% endblock %}

@@ -1,9 +1,10 @@
 from multiprocessing import context
+from plistlib import UID
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 import docker
 import time
-from .models import iptableRules,wafdetails
+from .models import iptableRules,wafdetails,Bills
 from .forms import UserRegistrationForm
 from django.contrib.auth import login
 import requests
@@ -17,6 +18,11 @@ client = docker.from_env() #start connection with docker
 # Create your views here.
 #shree ganeshay namah
 #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
+import boto3
+from dateutil.relativedelta import relativedelta
+from datetime import datetime as dt
+
+queue_url = "https://sqs.us-east-1.amazonaws.com/590852515231/AnilP-sqs-waf"
 
 def sgn(request):
     return HttpResponse("sgnons jkh jbm jam jkh jcs jkb jjb jjb jsb jsd jam jom jsm jlm jsm jsm jkb jhd jgb jjb jd jd jd jmp jg")
@@ -68,9 +74,16 @@ def addWafDetails(container_id,project_name):
 
 def dockerRun(request):
     request.session['msg']=""
+    bill_pay = Bills.objects.filter(Uid = request.user.id)
+    if len(bill_pay) > 0 :
+        is_bill_pending = is_bill_payed(bill_pay[0].last_date_to_pay)
+    else:
+        is_bill_pending = True
+
     if request.method == "GET":
         return render(request=request, template_name="dockerRun.html",context={
-            'images' : getImages()
+            'images' : getImages(),
+            "is_bill_pending" : is_bill_pending
         })	
 
     if request.method == "POST":
@@ -93,7 +106,11 @@ def dockerRun(request):
         context = { 'container_id' : container_id }
 
         addWafDetails(container_id,request.POST["name"])
-
+        date_after_month = date_after_month = dt.now() + relativedelta(months=1)
+        add_bill = Bills(Uid = request.user,
+                        project_name = request.POST["name"],
+                        last_date_to_pay = date_after_month)
+        add_bill.save()
         return redirect(containerList)
             #return render(request=request, template_name="dockerRun.html",context=context)	            
 
@@ -141,6 +158,7 @@ def containerRemove(request, container_id):
     cobj.remove()
     print("\n\n deleting all containers \n\n")
     wafdetails.objects.all().delete()
+    Bills.objects.all().delete()
     context = { "msg" : "Your Container Is Removed !!" }
     return redirect(containerList)
 
@@ -148,16 +166,24 @@ def containerList(request):
     cobjs =  [ container.attrs for container in client.containers.list() ]
     cobjs = [ [ d['Config']['Hostname'], d['Name'][1:], d['Id'], d['NetworkSettings']['Ports'][list(d['NetworkSettings']['Ports'].keys())[0]][0]['HostPort'], d['NetworkSettings']['IPAddress'] , "localhost"+":"+ d['NetworkSettings']['Ports'][list(d['NetworkSettings']['Ports'].keys())[0]][0]['HostPort'] , list(d['NetworkSettings']['Ports'].keys())[0] ] for d in cobjs if "container" in d['Name']] 
     context = None
+    bill_pay = Bills.objects.filter(Uid = request.user.id)
+    if len(bill_pay) > 0 :
+        is_bill_pending = is_bill_payed(bill_pay[0].last_date_to_pay)
+    else:
+        is_bill_pending = True
+
     if len(cobjs) >= 1:
         context= {  "cobjs" : cobjs , 
         "cDetails" : wafdetails.objects.all()[0] , 
         "port1" : int(cobjs[0][3])-1,
         "port2" : int(cobjs[0][3])-2,
-        "public_ip" : getPublicIP() }
+        "public_ip" : getPublicIP(),
+        "is_bill_pending" : is_bill_pending}
         print("\n\n")
         print(cobjs,"\n\n")
     else:
-        context= {  "cobjs" : cobjs 
+        context= {  "cobjs" : cobjs ,
+        "is_bill_pending" : is_bill_pending            
         }
 
     return render(request=request, template_name="containerDetails.html",context=context)
@@ -194,7 +220,14 @@ def serviceScale(request):
 def pullimages(request):
     if request.method == "GET":
         request.session['msg']=""
-        return render(request=request, template_name="pullimages.html",context={ })	
+        bill_pay = Bills.objects.filter(Uid = request.user.id)
+        if len(bill_pay) > 0 :
+            is_bill_pending = is_bill_payed(bill_pay[0].last_date_to_pay)
+        else:
+            is_bill_pending = True
+        return render(request=request, template_name="pullimages.html",context={ 
+            "is_bill_pending" : is_bill_pending
+        })	
 
     if request.method == "POST":
         try:
@@ -208,3 +241,64 @@ def pullimages(request):
             return render(request=request, template_name="pullimages.html",context={
                 'msg': request.session['msg']
              })	
+
+def getAuthenticateEmail(email):
+    sqs = boto3.client('sqs',region_name='us-east-1')
+
+    # Send message to SQS queue
+    response = sqs.send_message(
+        QueueUrl=queue_url,
+        DelaySeconds=10,
+        MessageAttributes={
+            'email': {
+                'DataType': 'String',
+                'StringValue': email
+            },
+            'is_secret': {
+                'DataType': 'String',
+                'StringValue': "no"
+            }					
+        },
+        MessageBody=(
+            'sgnons'
+        )
+    )
+    print("\n\n\n\n\n")
+    print(response['MessageId'])
+
+
+
+def register(request):
+    if request.method == "POST":
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            #getAuthenticateEmail(request.POST['email'])            
+            user = form.save()
+            login(request, user)
+            return redirect("dockerRun")
+    form = UserRegistrationForm()
+    return render (request=request, template_name="registration/register.html", context={"register_form":form})    
+
+def is_bill_payed(last_date_to_pay):
+    diff_days = relativedelta( dt.now() , last_date_to_pay )
+    print("\n\n\n",diff_days.days)
+    print(last_date_to_pay)
+    print(diff_days)
+    if diff_days.days < 0 or diff_days.months < 0 or diff_days.hours < 0 or  diff_days.minutes < 0:
+        return True
+    else:
+        return False    
+    return days
+
+
+def payBill(request):
+    bill_pay = Bills.objects.get(Uid = request.user.id)
+
+    if request.method == "POST":
+        bill_pay.last_date_to_pay = bill_pay.last_date_to_pay +  relativedelta(months=1)
+        bill_pay.save()
+    context = {
+        "last_date_to_pay" : bill_pay.last_date_to_pay
+    }    
+    return render (request=request, template_name="payBill.html",context=context)    
+	

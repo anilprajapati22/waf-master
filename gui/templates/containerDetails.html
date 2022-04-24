@@ -25,8 +25,11 @@ margin-top:5%;
        <p> {{key}} : {{value}} </p>
     {% endfor %}    
 {% endfor %} -->
+{% if not is_bill_pending %}
+    <h1> Please Pay Bill First </h1>
+{% endif %}
 
-{% if user.is_authenticated %}
+{% if user.is_authenticated  and is_bill_pending %}
 
 
     {% if cobjs %}

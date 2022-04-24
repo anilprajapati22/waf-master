@@ -11,6 +11,9 @@ urlpatterns = [
     path('containerList', views.containerList, name='containerList'),
     path('serviceList', views.serviceList, name='serviceList'),
     path('serviceScale', views.serviceScale, name='serviceScale'),
-    path('pullimages', views.pullimages, name='pullimages'),    
+    path('pullimages', views.pullimages, name='pullimages'),   
+    path("register", views.register, name="register"),     
+    path("payBill", views.payBill, name="payBill"),     
+
     #path('', views.index, name='index'),
 ]

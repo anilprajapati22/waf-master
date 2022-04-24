@@ -163,33 +163,24 @@
             
 
                 </div>
-                <li class="rules signin-active"><a class="btn">Pull Images</a></li>
+                <li class="rules signin-active"><a class="btn">Pay Bill</a></li>
             </ul>
         </div>
-
-        {% if not is_bill_pending %}
-            <h1> Please Pay Bill First </h1>
-        {% endif %}
-    
-        {% if user.is_authenticated  and is_bill_pending %}
-    
-
         <div ng-app ng-init="checked = false">
             <form class="form-signin" action="" method="post" class="mx-auto" name="form"> 
                     {% csrf_token %}
-                
+                <label >2000 Ruppes</label>
+                <label > last date : {{ last_date_to_pay }} </label>
 
-                <input type="text" class="form-styling form-control" name="image" placeholder="Image Name">
                 
-                <input type="text" class="form-styling form-control" name="tag" placeholder="by default latest">
                 
-                <button type="submit" class="btn btn-primary col-12 add-btn" name="login" value="Add">Add</button>
-
+                
+                <button type="submit" class="btn btn-primary col-12 add-btn" name="login" value="Add">Pay</button>
             </form>
          
           
             </div></div></div>
-            {% endif %}
+
 
   <script>
     $(function() {
