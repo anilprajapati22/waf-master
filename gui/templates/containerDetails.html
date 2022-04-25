@@ -8,6 +8,10 @@
 .table{
 margin-top:5%;
 }
+.table-dark{
+    background-color: #08164d;
+
+}
 </style>
     <div>
         {% if msg %}
@@ -59,15 +63,15 @@ margin-top:5%;
                     <td> 
                         
                           
-                                <a href="http://{{public_ip}}:{{ c.3 }}"  target="_blank"> ssh </a>
-                                <a href="http://{{public_ip}}:{{ port1 }}"  target="_blank"> Client </a>
-                                <a href="http://{{public_ip}}:{{ port2 }}"  target="_blank"> WAF </a>
+                                <a href="http://{{public_ip}}:{{ c.3 }}" class="btn btn-primary rounded" target="_blank"> ssh </a>
+                                <a href="http://{{public_ip}}:{{ port1 }}" class="btn btn-primary rounded" target="_blank"> Client </a>
+                                <a href="http://{{public_ip}}:{{ port2 }}" class="btn btn-primary rounded" target="_blank"> WAF </a>
                           
                     </td>
                     {% if services %}
                         <td> <a href="/{{ c.2 }}/serviceRemove"> <b>  Remove  </b> </a> </td>
                     {%else%}
-                        <td> <a href="/{{ c.2 }}/containerRemove"> <b>  Remove  </b> </a> </td>
+                        <td> <a href="/{{ c.2 }}/containerRemove" class="btn btn-primary rounded" > <b>  Remove  </b> </a> </td>
                     {%endif%}
                     {% if services %}
                         <td>
